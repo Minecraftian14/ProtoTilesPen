@@ -1,0 +1,54 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        google()
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        jcenter()
+    }
+    dependencies {
+    }
+}
+
+apply plugin: 'java-library'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+sourceCompatibility = 8.0
+
+compileJava {
+    options.incremental = true
+}
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+ext.appName = 'ProtoTilesPen'
+group 'com.mcxiv.plugin'
+version '0.1'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    maven { url 'https://jitpack.io' }
+    jcenter()
+}
+
+dependencies {
+    implementation "com.badlogicgames.gdx:gdx:1.10.0"
+//    implementation 'org.apache.commons:commons-imaging:1.0-alpha3-SNAPSHOT'
+//    implementation 'net.imagej:ij:1.51h'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+tasks.eclipse.doLast {
+    delete '.project'
+    delete '.classpath'
+    delete '.settings/'
+}
