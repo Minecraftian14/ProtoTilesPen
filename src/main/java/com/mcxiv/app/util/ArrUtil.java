@@ -158,7 +158,7 @@ public class ArrUtil {
         int ho = one[0].length, ht = two[0].length;
         assert wo == wt && ho == ht : "No luck this time, the two images should have the same size.";
 
-        Color[][] result = new Color[wo][wt];
+        Color[][] result = new Color[wo][ho];
 
         for (int i = 0; i < wo; i++) {
             for (int j = 0; j < ho; j++) {
@@ -214,9 +214,18 @@ public class ArrUtil {
         return result;
     }
 
-    private static Color newColor(Color c) {
+    public static Color newColor(Color c) {
         if (c == null) return null;
         return new Color(c.r, c.g, c.b, c.a);
+    }
+
+    public static Color[][] forceSquare(Color[][] pixels) {
+        int w = Math.min(pixels.length, pixels[0].length);
+        Color[][] result = new Color[w][w];
+        for (int i = 0; i < w; i++)
+            for (int j = 0; j < w; j++)
+                result[i][j] = newColor(pixels[i][j]);
+        return result;
     }
 
     public interface BiPredicate {

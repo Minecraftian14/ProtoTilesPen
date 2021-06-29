@@ -36,8 +36,6 @@ repositories {
 
 dependencies {
     implementation "com.badlogicgames.gdx:gdx:1.10.0"
-//    implementation 'org.apache.commons:commons-imaging:1.0-alpha3-SNAPSHOT'
-//    implementation 'net.imagej:ij:1.51h'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'

@@ -5,6 +5,9 @@ import com.mcxiv.app.util.ArrUtil;
 
 public class CachedTiles {
 
+    public final int width;
+    public final int height;
+
     public Color[][] topFlat;
     public Color[][] rigFlat;
     public Color[][] lefFlat;
@@ -64,6 +67,9 @@ public class CachedTiles {
     public Color[][] allInner;
 
     public CachedTiles(ProtoTiles tiles) {
+
+        width = tiles.getWidth();
+        height = tiles.getHeight();
 
         Color[][] topPixels = tiles.getTop();
 
