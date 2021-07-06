@@ -2,6 +2,7 @@ package com.mcxiv.app;
 
 import com.mcxiv.app.util.*;
 import com.mcxiv.app.util.functions.FloatFunction;
+import com.mcxiv.util.Line;
 
 public class TileDissector {
 

@@ -1,5 +1,7 @@
 package com.mcxiv.app.util;
 
+import com.mcxiv.util.Line;
+import com.mcxiv.util.Vector2;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

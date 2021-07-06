@@ -1,6 +1,10 @@
 package com.mcxiv.app.util;
 
 import com.mcxiv.app.util.functions.FloatFunction;
+import com.mcxiv.util.InvertedSlopeConstantLine;
+import com.mcxiv.util.Line;
+import com.mcxiv.util.SlopeConstantLine;
+import com.mcxiv.util.Vector2;
 
 public class ArrUtil {
 
