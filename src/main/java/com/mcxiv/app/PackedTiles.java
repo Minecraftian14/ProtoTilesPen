@@ -1,9 +1,7 @@
 package com.mcxiv.app;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.mcxiv.app.util.ArrUtil;
-import com.mcxiv.app.util.GdxUtil;
+import com.mcxiv.app.util.Color;
 
 public class PackedTiles {
 
@@ -77,8 +75,8 @@ public class PackedTiles {
         add(tiles.allInner, 8, 4);
 
         // oppo_corn = The two opposite inner corner tiles just after comp_vert in the top.
-        add(tiles.topRigAndBotLefOppoInner, 9, 0);
-        add(tiles.topLefAndBotRigOppoInner, 9, 1);
+        add(tiles.topRigAndBotLefInner, 9, 0);
+        add(tiles.topLefAndBotRigInner, 9, 1);
 
         // triple_corn = The small square (2x2) placed right below oppo_corn and right after comp_vert
         add(tiles.exceptBotRigInnerCorner, 9, 2);

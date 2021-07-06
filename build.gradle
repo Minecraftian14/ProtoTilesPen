@@ -29,14 +29,9 @@ version '0.1'
 repositories {
     mavenLocal()
     mavenCentral()
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-    maven { url 'https://jitpack.io' }
-    jcenter()
 }
 
 dependencies {
-    implementation "com.badlogicgames.gdx:gdx:1.10.0"
-
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
