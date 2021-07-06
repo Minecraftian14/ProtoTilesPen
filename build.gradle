@@ -30,7 +30,11 @@ repositories {
 }
 
 dependencies {
-    implementation project(':StraightLines')
+    implementation project(':ProtoTilesPen:StraightLines')
+//    try {
+//    } catch (GradleScriptException e) {
+//
+//    }
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
@@ -132,7 +136,7 @@ artifacts {
 }
 
 // I dont know what
-wrapper {
-    gradleVersion = "6.1.1"
-    distributionType = Wrapper.DistributionType.ALL
-}
+//wrapper {
+//    gradleVersion = "6.1.1"
+//    distributionType = Wrapper.DistributionType.ALL
+//}
