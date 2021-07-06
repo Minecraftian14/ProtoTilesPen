@@ -27,15 +27,11 @@ version '0.1'
 repositories {
     mavenLocal()
     mavenCentral()
+            maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    implementation project(':ProtoTilesPen:StraightLines')
-//    try {
-//    } catch (GradleScriptException e) {
-//
-//    }
-
+    implementation project(':StraightLines')
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
