@@ -5,13 +5,12 @@ import com.mcxiv.app.util.Color;
 
 public class PackedTiles {
 
-    private final int w, h;
+    private final int w;
     private final Color[][] pixels;
 
     public PackedTiles(CachedTiles tiles) {
-        w = tiles.width;
-        h = tiles.height;
-        pixels = new Color[w * 11][h * 5];
+        w = tiles.topFlat.length;
+        pixels = new Color[w * 11][w * 5];
 
         for (int i = 0; i < pixels.length; i++)
             for (int j = 0; j < pixels[0].length; j++)
@@ -88,7 +87,7 @@ public class PackedTiles {
 
     private void add(Color[][] image, int x_b, int y_b) {
         for (int i = 0, x = x_b * w; i < w; i++, x++)
-            for (int j = 0, y = y_b * h; j < h; j++, y++)
+            for (int j = 0, y = y_b * w; j < w; j++, y++)
                 pixels[x][y] = ArrUtil.newColor(image[i][j]);
     }
 

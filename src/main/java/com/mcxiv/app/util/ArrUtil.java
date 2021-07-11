@@ -8,10 +8,6 @@ import com.mcxiv.util.Vector2;
 
 public class ArrUtil {
 
-    // TODO add option to use custom interpolator for fading
-
-    public static Blending blending = Blending.defaultMix;
-
     private static Vector2 cache = new Vector2(0, 0);
 
     private static void getRandomPoint(Line line) {
@@ -178,8 +174,7 @@ public class ArrUtil {
         return pixels;
     }
 
-
-    public static Color[][] mix(Color[][] one, Color[][] two) {
+    public static Color[][] mix(Color[][] one, Color[][] two, Blending blender) {
         int wo = one.length, wt = two.length;
         int ho = one[0].length, ht = two[0].length;
         assert wo == wt && ho == ht : "No luck this time, the two images should have the same size.";
@@ -197,7 +192,7 @@ public class ArrUtil {
 
                 } else {
                     if (t == null) result[i][j] = newColor(o);
-                    else result[i][j] = blending.blend(o, t);
+                    else result[i][j] = blender.blend(o, t);
                 }
             }
         }
@@ -205,37 +200,8 @@ public class ArrUtil {
         return result;
     }
 
-    public static Color[][] mix(Color[][] one, Color[][] two, Color[][] thr) {
-        return mix(one, mix(two, thr));
-    }
-
-    @Deprecated
-    public static void fade(Color[][] pixels, int x1, int y1, int x2, int y2) {
-        int w = pixels.length;
-        int h = pixels[0].length;
-
-        Line lAB = Line.fromTwoPoints(x1, y1, x2, y2);
-
-        Line lpA = lAB.perpendicularAt(x1, y1);
-        Line lpB = lAB.perpendicularAt(x2, y2);
-
-        float LA_of_B = lpA.put(x2, y2);
-        float LB_of_A = lpB.put(x1, y1);
-
-        BiPredicate LA_of_P = (x, y) -> Math.signum(lpA.put(x, y)) == Math.signum(LA_of_B);
-        BiPredicate LB_of_P = (x, y) -> Math.signum(lpB.put(x, y)) == Math.signum(LB_of_A);
-
-        float d = lpB.distance(x1, y1);
-
-        for (int i = 0; i < w; i++) {
-            for (int j = 0; j < h; j++) {
-                Color c = pixels[i][j];
-                if (LA_of_P.eval(i, j) && LB_of_P.eval(i, j)) {
-                    float alp = lpB.distance(i, j) / d;
-                    c.a = Math.min(AppUtil.intr(alp), c.a);
-                }
-            }
-        }
+    public static Color[][] mix(Color[][] one, Color[][] two, Color[][] thr, Blending blender) {
+        return mix(one, mix(two, thr, blender), blender);
     }
 
     public static void fade(Color[][] pixels, FloatFunction interpolator, int x1, int y1, int x2, int y2) {

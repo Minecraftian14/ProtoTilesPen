@@ -1,10 +1,14 @@
 package com.mcxiv.app;
 
-import com.mcxiv.app.util.*;
+import com.mcxiv.app.util.AppUtil;
+import com.mcxiv.app.util.ArrUtil;
+import com.mcxiv.app.util.Color;
 import com.mcxiv.app.util.functions.FloatFunction;
 import com.mcxiv.util.Line;
 
-public class TileDissector {
+
+// Backup
+public class TileDissector_old {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////// RECTANGLES WHICH ARE ALIGNED BY THE SIDES TOUCHING THREE SIDES
@@ -404,6 +408,7 @@ public class TileDissector {
      */
     public static Color[][] getTopTri(boolean fade, int fadeLength, Color[][] raw, FloatFunction interpolator, boolean clone, boolean deNull) {
         raw = arrayPreCheck(raw, clone);
+
         float w_org = raw.length;
         float h_org = raw[0].length;
 
@@ -615,7 +620,6 @@ public class TileDissector {
     //////////// CROP TOOL ONLY CUTS TRIANGLES
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // TODO: RECTANGLES WHICH ARE ALIGNED BY THE CORNERS AND TOUCH ONLY TWO SIDES
     //<editor-fold defaultstate="collapsed" desc="TRIANGLES WHICH ARE ALIGNED BY THE CORNERS AND TOUCH ONLY TWO SIDES">
 
     /**
@@ -815,8 +819,9 @@ public class TileDissector {
         int h_org = raw[0].length;
         int effectiveLength = (int) (fadeLength * AppUtil.ROOT_2);
 
-        ArrUtil.retainByPredicate(raw, (x, y) -> x+y >  w_org + h_org - width - effectiveLength);
-        if (fade) ArrUtil.fade(raw, interpolator, w_org-width, h_org, w_org-width-effectiveLength, h_org - effectiveLength);
+        ArrUtil.retainByPredicate(raw, (x, y) -> x + y > w_org + h_org - width - effectiveLength);
+        if (fade)
+            ArrUtil.fade(raw, interpolator, w_org - width, h_org, w_org - width - effectiveLength, h_org - effectiveLength);
 
         if (deNull) ArrUtil.deNull(raw, Color.INVISIBLE);
         return raw;
@@ -874,7 +879,7 @@ public class TileDissector {
         int effectiveLength = (int) (fadeLength * AppUtil.ROOT_2);
         ArrUtil.retainByPredicate(raw, (x, y) -> x < width + fadeLength && x + y < width + height + effectiveLength);
         if (fade) {
-            ArrUtil.fade(raw, interpolator, width, 0, width+fadeLength, 0);
+            ArrUtil.fade(raw, interpolator, width, 0, width + fadeLength, 0);
             ArrUtil.fade(raw, interpolator, width, height, width + effectiveLength, height + effectiveLength);
         }
         if (deNull) ArrUtil.deNull(raw, Color.INVISIBLE);
@@ -922,9 +927,9 @@ public class TileDissector {
         raw = arrayPreCheck(raw, clone);
         int w_org = raw.length;
         int effectiveLength = (int) (fadeLength * AppUtil.ROOT_2);
-        ArrUtil.retainByPredicate(raw, (x, y) -> x > w_org-width - fadeLength && y < x - w_org + width + height + effectiveLength);
+        ArrUtil.retainByPredicate(raw, (x, y) -> x > w_org - width - fadeLength && y < x - w_org + width + height + effectiveLength);
         if (fade) {
-            ArrUtil.fade(raw, interpolator, w_org-width, 0, w_org-width - fadeLength, 0);
+            ArrUtil.fade(raw, interpolator, w_org - width, 0, w_org - width - fadeLength, 0);
             ArrUtil.fade(raw, interpolator, w_org - width, height, w_org - width - effectiveLength, height + effectiveLength);
         }
         if (deNull) ArrUtil.deNull(raw, Color.INVISIBLE);
@@ -974,7 +979,7 @@ public class TileDissector {
         int effectiveLength = (int) (fadeLength * AppUtil.ROOT_2);
         ArrUtil.retainByPredicate(raw, (x, y) -> x < width + fadeLength && y > x + h_org - height - width - effectiveLength);
         if (fade) {
-            ArrUtil.fade(raw, interpolator, width, 0, width+fadeLength, 0);
+            ArrUtil.fade(raw, interpolator, width, 0, width + fadeLength, 0);
             ArrUtil.fade(raw, interpolator, width, h_org - height, width + effectiveLength, h_org - height - effectiveLength);
         }
         if (deNull) ArrUtil.deNull(raw, Color.INVISIBLE);
@@ -1026,7 +1031,7 @@ public class TileDissector {
         int effectiveLength = (int) (fadeLength * AppUtil.ROOT_2);
         ArrUtil.retainByPredicate(raw, (x, y) -> x > w_org - width - fadeLength && x + y > w_org - width + h_org - height - effectiveLength);
         if (fade) {
-            ArrUtil.fade(raw, interpolator, w_org - width , 0,w_org - width - fadeLength, 0);
+            ArrUtil.fade(raw, interpolator, w_org - width, 0, w_org - width - fadeLength, 0);
             ArrUtil.fade(raw, interpolator, w_org - width, h_org - height, w_org - width - effectiveLength, h_org - height - effectiveLength);
         }
         if (deNull) ArrUtil.deNull(raw, Color.INVISIBLE);

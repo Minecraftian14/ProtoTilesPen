@@ -10,8 +10,6 @@ public interface Blending {
 
     Color blend(Color one, Color two);
 
-
-
     Blending defaultMix = (one, two) -> {
         float sum = one.a + two.a;
         if (sum <= 0 || sum > 2) sum = 2;
@@ -34,6 +32,8 @@ public interface Blending {
                 fin_a
         );
     };
+
+    Blending TwoOverOne = (one, two) -> oneOverTwo.blend(two, one);
 
     // @off
     ElementWiseOperation normal         = new ElementWiseOperation((a, b) -> a);

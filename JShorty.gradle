@@ -1,0 +1,131 @@
+apply plugin: 'java'
+
+import groovy.io.FileType
+import groovy.json.JsonSlurper
+
+task compileJShorty(type: JavaExec) {
+
+    def proj_root = project.projectDir
+    def gen_root = project.buildDir.absolutePath + "\\generated\\JShorty\\main\\java"
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    def configurations_args = []
+
+    configurations_args << "jst_args_project_root=" + proj_root.absolutePath
+    configurations_args << "jst_args_sources_root=" + gen_root
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    def file_name_args = []
+
+    project.sourceSets.main.java.srcDirs.each { root ->
+        root.eachFileRecurse(FileType.FILES) { file ->
+            file_name_args << file.absolutePath
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    project.sourceSets.main.java.srcDir(project.buildDir.absolutePath + "\\generated\\JShorty\\main\\java")
+
+    def jshorty_exec = ""
+
+
+    proj_root.eachFileRecurse(FileType.FILES) { file ->
+        if (file.name.matches("JShorty.*.jar\$")) {
+            jshorty_exec = file.absolutePath
+            return false
+        }
+    }
+
+    if (jshorty_exec.equals(""))
+        downloadLatestJShorty(proj_root.absolutePath)
+
+    classpath jshorty_exec
+    args configurations_args + file_name_args
+}
+
+compileJava.dependsOn compileJShorty
+
+task something {
+    downloadLatestJShorty(project.projectDir.absolutePath)
+}
+
+static void downloadLatestJShorty(String path) {
+    def releaseData = downloadToString("https://api.github.com/repos/Minecraftian14/JShortyOutlet/releases/latest");
+    def parsedJson = new JsonSlurper().parseText(releaseData)
+
+    for (data in parsedJson.assets) {
+
+        def assetName = data.name
+        println assetName
+        if (assetName.startsWith("JShorty") && assetName.endsWith(".jar")) {
+
+            println "Downloading release: $parsedJson.tag_name"
+            downloadFile(data.browser_download_url.toString(), path + File.separator + "jshorty", assetName.toString())
+            break;
+        }
+    }
+}
+
+static void downloadFile(String fileURL, String saveDir, String fileName) throws IOException {
+    new File(saveDir).mkdirs();
+    FileOutputStream outputStream = new FileOutputStream(saveDir + File.separator + fileName);
+    downloadTo(fileURL, outputStream);
+}
+
+static String downloadToString(String fileURL) throws IOException {
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    downloadTo(fileURL, outputStream);
+    return outputStream.toString();
+}
+
+static void downloadTo(String urlPath, OutputStream outputStream) throws IOException {
+
+    def url = new URL(urlPath);
+    def connection = (HttpURLConnection) url.openConnection();
+    connection.setInstanceFollowRedirects(true);
+
+    // always check HTTP response code first
+    def responseCode = connection.getResponseCode();
+
+    if (responseCode != HttpURLConnection.HTTP_OK) {
+        println("No file to download. Server replied HTTP code: " + responseCode);
+        return;
+    }
+
+    // opens input stream from the HTTP connection
+    InputStream inputStream = connection.getInputStream();
+
+    // opens an output stream to save into file
+    def currentBytes = 0;
+    def bytesRead;
+    def buffer = new byte[4096];
+
+    while ((bytesRead = inputStream.read(buffer)) != -1) {
+        currentBytes += bytesRead;
+        outputStream.write(buffer, 0, bytesRead);
+    }
+
+    outputStream.close();
+    inputStream.close();
+    connection.disconnect();
+}
+
+
+task parseJson {
+    doLast {
+        def jsonFile = file('path/to/json')
+        def parsedJson = new JsonSlurper().parseText(jsonFile.text)
+
+        println parsedJson.properties.bar.type
+    }
+}
+
+
+
+
+
+
+

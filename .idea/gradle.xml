@@ -11,7 +11,7 @@
         <option name="gradleHome" value="$PROJECT_DIR$/../../../Applications/Gradle" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/StraightLines" />
+            <option value="$PROJECT_DIR$" />
           </set>
         </option>
       </GradleProjectSettings>

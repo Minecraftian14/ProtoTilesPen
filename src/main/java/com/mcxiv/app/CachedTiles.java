@@ -1,16 +1,11 @@
 package com.mcxiv.app;
 
-import com.mcxiv.app.util.AppUtil;
 import com.mcxiv.app.util.ArrUtil;
+import com.mcxiv.app.util.Blending;
 import com.mcxiv.app.util.Color;
 import com.mcxiv.app.util.functions.FloatFunction;
 
-import java.util.function.Function;
-
 public class CachedTiles {
-
-    public final int width;
-    public final int height;
 
     public Color[][] topFlat;
     public Color[][] rigFlat;
@@ -70,97 +65,89 @@ public class CachedTiles {
     public Color[][] allFlat;
     public Color[][] allInner;
 
-    public CachedTiles(ProtoTiles_old tiles) {
+    public CachedTiles(Color[][] original, boolean fade, int fadeLength, FloatFunction interpolator, Blending blender) {
 
-        width = tiles.getWidth();
-        height = tiles.getHeight();
-
-        boolean fade = true;
-        int fadeLength = 20;
-        FloatFunction interpolator = AppUtil::intr;
-
-        Color[][] topPixels = tiles.getTopFlat();
+        Color[][] topPixels = ProtoTiles.getTopFlat(original);
+//        Color[][] topPixels = ArrUtil.clonePixels(original);
 
         topFlat = topPixels;
         rigFlat = ArrUtil.rot90(topPixels);
         lefFlat = ArrUtil.rot270(topPixels);
         botFlat = ArrUtil.rot180(topPixels);
 
-        Color[][] topCapPixels = ProtoTiles_new.getTopCap(fade, fadeLength, topPixels, interpolator);
-//        Color[][] topCapPixels = tiles.getTopCap();
+        Color[][] topCapPixels = ProtoTiles.getTopCap(fade, fadeLength, original, interpolator, blender);
 
         topCap = topCapPixels;
         rigCap = ArrUtil.rot90(topCapPixels);
         lefCap = ArrUtil.rot270(topCapPixels);
         botCap = ArrUtil.rot180(topCapPixels);
 
-        Color[][] topLefCornerPixels = ProtoTiles_new.getTopLefCor(fade, fadeLength, topPixels, interpolator);
-//        Color[][] topLefCornerPixels = tiles.getTopLefCor();
+        Color[][] topLefCornerPixels = ProtoTiles.getTopLefCor(fade, fadeLength, original, interpolator, blender);
 
         topLefCorner = topLefCornerPixels;
         topRigCorner = ArrUtil.rot90(topLefCornerPixels);
         botRigCorner = ArrUtil.rot180(topLefCornerPixels);
         botLefCorner = ArrUtil.rot270(topLefCornerPixels);
 
-        Color[][] topLefInnerCornerPixels = ProtoTiles_new.getTopLefInnerCor(fade, fadeLength, topPixels, interpolator);
+        Color[][] topLefInnerCornerPixels = ProtoTiles.getTopLefInnerCor(fade, fadeLength, original, interpolator, blender);
 
         topLefInnerCorner = topLefInnerCornerPixels;
         topRigInnerCorner = ArrUtil.rot90(topLefInnerCornerPixels);
         botRigInnerCorner = ArrUtil.rot180(topLefInnerCornerPixels);
         botLefInnerCorner = ArrUtil.rot270(topLefInnerCornerPixels);
 
-        Color[][] topLefDoubleCornerPixels = ProtoTiles_new.getTopLefDoubleCor(fade, fadeLength, topPixels, interpolator);
+        Color[][] topLefDoubleCornerPixels = ProtoTiles.getTopLefDoubleCor(fade, fadeLength, original, interpolator, blender);
 
         topLefDoubleCorner = topLefDoubleCornerPixels;
         topRigDoubleCorner = ArrUtil.rot90(topLefDoubleCornerPixels);
         botRigDoubleCorner = ArrUtil.rot180(topLefDoubleCornerPixels);
         botLefDoubleCorner = ArrUtil.rot270(topLefDoubleCornerPixels);
 
-        Color[][] topFlatRigInnerPixels = ProtoTiles_new.getTopFlatRigInnerCorner(fade, fadeLength, topPixels, interpolator);
+        Color[][] topFlatRigInnerPixels = ProtoTiles.getTopFlatRigInnerCorner(fade, fadeLength, original, interpolator, blender);
 
         topFlatRigInner = topFlatRigInnerPixels;
         rigFlatBotInner = ArrUtil.rot90(topFlatRigInnerPixels);
         botFlatLefInner = ArrUtil.rot180(topFlatRigInnerPixels);
         lefFlatTopInner = ArrUtil.rot270(topFlatRigInnerPixels);
 
-        Color[][] topFlatLefInnerPixels = ProtoTiles_new.getTopFlatLefInnerCorner(fade, fadeLength, topPixels, interpolator);
+        Color[][] topFlatLefInnerPixels = ProtoTiles.getTopFlatLefInnerCorner(fade, fadeLength, original, interpolator, blender);
 
         topFlatLefInner = topFlatLefInnerPixels;
         rigFlatTopInner = ArrUtil.rot90(topFlatLefInnerPixels);
         botFlatRigInner = ArrUtil.rot180(topFlatLefInnerPixels);
         lefFlatBotInner = ArrUtil.rot270(topFlatLefInnerPixels);
 
-        Color[][] topFlatOppoInnerPixels = ProtoTiles_new.getTopFlatOppoInner(fade, fadeLength, topPixels, interpolator);
+        Color[][] topFlatOppoInnerPixels = ProtoTiles.getTopFlatOppoInner(fade, fadeLength, original, interpolator, blender);
 
         topFlatOppoInner = topFlatOppoInnerPixels;
         rigFlatOppoInner = ArrUtil.rot90(topFlatOppoInnerPixels);
         botFlatOppoInner = ArrUtil.rot180(topFlatOppoInnerPixels);
         lefFlatOppoInner = ArrUtil.rot270(topFlatOppoInnerPixels);
 
-        Color[][] topOppoInnerPixels = ProtoTiles_new.getTopOppoInner(fade, fadeLength, topPixels, interpolator);
+        Color[][] topOppoInnerPixels = ProtoTiles.getTopOppoInner(fade, fadeLength, original, interpolator, blender);
 
         topOppoInner = topOppoInnerPixels;
         rigOppoInner = ArrUtil.rot90(topOppoInnerPixels);
         botOppoInner = ArrUtil.rot180(topOppoInnerPixels);
         lefOppoInner = ArrUtil.rot270(topOppoInnerPixels);
 
-        Color[][] topLefAndBotRigInnerPixels = ProtoTiles_new.getTopLefAndBotRigInnerCorner(fade, fadeLength, topPixels, interpolator);
+        Color[][] topLefAndBotRigInnerPixels = ProtoTiles.getTopLefAndBotRigInnerCorner(fade, fadeLength, original, interpolator, blender);
 
         topLefAndBotRigInner = topLefAndBotRigInnerPixels;
         topRigAndBotLefInner = ArrUtil.rot90(topLefAndBotRigInnerPixels);
 
-        Color[][] exceptBotRigInnerCornerPixels = ProtoTiles_new.getExceptTopLefInnerCorner(fade, fadeLength, topPixels, interpolator);
+        Color[][] exceptBotRigInnerCornerPixels = ProtoTiles.getExceptTopLefInnerCorner(fade, fadeLength, original, interpolator, blender);
 
         exceptBotRigInnerCorner = exceptBotRigInnerCornerPixels;
         exceptBotLefInnerCorner = ArrUtil.rot90(exceptBotRigInnerCornerPixels);
         exceptTopLefInnerCorner = ArrUtil.rot180(exceptBotRigInnerCornerPixels);
         exceptTopRigInnerCorner = ArrUtil.rot270(exceptBotRigInnerCornerPixels);
 
-        center = ProtoTiles_new.getCenter(fade, fadeLength, topPixels, interpolator);
-        allFlat = tiles.getAllFlat();
-        allInner = ProtoTiles_new.getAllInnerCorner(fade, fadeLength, topPixels, interpolator);
+        center = ProtoTiles.getCenter(fade, fadeLength, original, interpolator, blender);
+        allFlat = ProtoTiles.getAllFlat(fade, fadeLength, original, interpolator, blender);
+        allInner = ProtoTiles.getAllInnerCorner(fade, fadeLength, original, interpolator, blender);
 
-        Color[][] topBotPixels = tiles.getTopBotFlat();
+        Color[][] topBotPixels = ProtoTiles.getTopBotFlat(fade, fadeLength, original, interpolator, blender);
 
         topBotFlat = topBotPixels;
         rigLefFlat = ArrUtil.rot270(topBotPixels);

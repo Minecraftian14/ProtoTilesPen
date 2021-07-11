@@ -1,33 +1,36 @@
-com/mcxiv/app/ProtoTiles_old.java
- com.mcxiv.app.ProtoTiles_old
 com/mcxiv/app/util/functions/FloatFunction.java
  com.mcxiv.app.util.functions.FloatFunction
-com/mcxiv/app/TileDissector.java
- com.mcxiv.app.TileDissector
-com/mcxiv/app/ProtoTiles_new.java
- com.mcxiv.app.ProtoTiles_new
+com/mcxiv/app/TileDissector_old.java
+ com.mcxiv.app.TileDissector_old
+com/mcxiv/app/PackedTiles.java
+ com.mcxiv.app.PackedTiles
 com/mcxiv/app/CachedTiles.java
  com.mcxiv.app.CachedTiles
 com/mcxiv/app/util/AppUtil.java
  com.mcxiv.app.util.AppUtil
- com.mcxiv.app.util.AppUtil$1
 com/mcxiv/app/util/ArrUtil.java
  com.mcxiv.app.util.ArrUtil
  com.mcxiv.app.util.ArrUtil$BiFunction
  com.mcxiv.app.util.ArrUtil$BiPredicate
 com/mcxiv/app/util/Color.java
  com.mcxiv.app.util.Color
-com/mcxiv/app/tasks/Task.java
- com.mcxiv.app.tasks.Task
- com.mcxiv.app.tasks.Task$DeNull
- com.mcxiv.app.tasks.Task$Fade
- com.mcxiv.app.tasks.Task$Retain
- com.mcxiv.app.tasks.Task$Sequence
 com/mcxiv/app/util/Blending.java
  com.mcxiv.app.util.Blending
  com.mcxiv.app.util.Blending$1
  com.mcxiv.app.util.Blending$ElementWiseOperation
  com.mcxiv.app.util.Blending$FloatFunction
  com.mcxiv.app.util.Blending$IntFunction
-com/mcxiv/app/PackedTiles.java
- com.mcxiv.app.PackedTiles
+com/mcxiv/app/tasks/Task.java
+ com.mcxiv.app.tasks.Task
+ com.mcxiv.app.tasks.Task$DeNull
+ com.mcxiv.app.tasks.Task$Fade
+ com.mcxiv.app.tasks.Task$Retain
+ com.mcxiv.app.tasks.Task$Sequence
+com/mcxiv/app/TileDissector.java
+ com.mcxiv.app.TileDissector
+TileDissectorMethod_jstmp.java
+ TileDissectorMethod_jstmp
+TileDissectorOverloader_jstmp.java
+ TileDissectorOverloader_jstmp
+com/mcxiv/app/ProtoTiles.java
+ com.mcxiv.app.ProtoTiles

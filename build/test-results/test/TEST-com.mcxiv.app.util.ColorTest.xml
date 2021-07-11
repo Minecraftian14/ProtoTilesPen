@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.mcxiv.app.util.ColorTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2021-06-30T10:21:17" hostname="ANIRUDHHP" time="0.029">
+<testsuite name="com.mcxiv.app.util.ColorTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2021-07-11T05:52:03" hostname="ANIRUDHHP" time="0.019">
   <properties/>
-  <testcase name="simple()" classname="com.mcxiv.app.util.ColorTest" time="0.029"/>
+  <testcase name="simple()" classname="com.mcxiv.app.util.ColorTest" time="0.019"/>
   <system-out><![CDATA[Color{ r=1.0000   g=0.7843   b=0.0000   a=1.0000 }
 11111111111111111100100000000000
 11111111111111111100100000000000

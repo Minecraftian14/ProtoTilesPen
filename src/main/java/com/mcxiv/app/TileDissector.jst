@@ -1,0 +1,628 @@
+package com.mcxiv.app;
+
+import com.mcxiv.app.util.AppUtil;
+import com.mcxiv.app.util.ArrUtil;
+import com.mcxiv.app.util.Color;
+import com.mcxiv.app.util.functions.FloatFunction;
+import com.mcxiv.util.Line;
+
+public class TileDissector {
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////// RECTANGLES WHICH ARE ALIGNED BY THE SIDES TOUCHING THREE SIDES
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //<editor-fold defaultstate="collapsed" desc="RECTANGLES WHICH ARE ALIGNED BY THE SIDES TOUCHING THREE SIDES">
+
+    createDissectorMethod("getTopRect")
+        .parameter("height", """The height from top of original image to be used as the height of the rectangle to be cropped.""")
+        .description("""
+            Returns the top part of original pixels cropped like a rectangle of the same width.
+            The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+        """)
+        .crop(y < height + fadeLength)
+        .fade(0, height, 0, height + fadeLength);
+
+
+    createDissectorMethod("getBotRect")
+                .parameter("height", """The height from bottom of original image to be used as the height of the rectangle to be cropped.""")
+                .description("""
+                    Returns the bottom part of original pixels cropped like a rectangle of the same width.
+                    The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                """)
+                .crop(y > h_fl - height - fadeLength)
+                .fade(0, h_in - height, 0, h_in - height - fadeLength);
+
+
+    createDissectorMethod("getLefRect")
+                .parameter("width", """The width from left of original image to be used as the width of the rectangle to be cropped.""")
+                .description("""
+                    Returns the left part of original pixels cropped like a rectangle of the same height.
+                    The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                """)
+                .crop(x < width + fadeLength)
+                .fade(width, 0, width + fadeLength, 0);
+
+    createDissectorMethod("getRigRect")
+                .parameter("width", """The width from right of original image to be used as the width of the rectangle to be cropped.""")
+                .description("""
+                    Returns the right part of original pixels cropped like a rectangle of the same height.
+                    The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                """)
+                .crop(x > w_fl - width - fadeLength)
+                .fade(w_in - width, 0, w_in - width - fadeLength, 0);
+
+    //</editor-fold>
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////// RECTANGLES WHICH LYE IN BETWEEN THE IMAGE BUT TOUCHES TWO OPPOSITE SIDES
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //<editor-fold defaultstate="collapsed" desc="RECTANGLES WHICH LYE IN BETWEEN THE IMAGE BUT TOUCHES TWO OPPOSITE SIDES">
+
+    createDissectorMethod("getHorRect")
+                    .parameter("h_abv", """height_above: The height above the middle of original image to be summed with h_btw and be used as the height of the rectangle to be cropped.""")
+                    .parameter("h_blw", """height_below: The height below the middle of original image to be summed with h_abv and be used as the height of the rectangle to be cropped.""")
+                    .description("""
+                        Returns the middle part of original pixels cropped like a rectangle with full width.
+                        The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                    """)
+                    .crop(y > h_fl_2 - h_abv - fadeLength && y < h_fl_2 + h_blw + fadeLength)
+                    .fade(0, h_in_2 - h_abv, 0, h_in_2 - h_abv - fadeLength)
+                    .fade(0, h_in_2 + h_blw, 0, h_in_2 + h_blw + fadeLength);
+
+    overloadDissectorMethod("getHorRect")
+                        .parameter("height", """The total height of the rectangle to be cropped.""")
+                        .description("""
+                            Returns the middle part of original pixels cropped like a rectangle with full width.
+                            The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                        """) {
+        return getHorRect(height / 2, height / 2, fade, fadeLength, raw, interpolator, clone, deNull);
+    }
+
+    createDissectorMethod("getVerRect")
+                        .parameter("w_lef", """width_left : The width left  of the middle of original image to be summed with w_rig and be used as the width of the rectangle to be cropped.""")
+                        .parameter("w_rig", """width_right: The width right of the middle of original image to be summed with w_lef and be used as the width of the rectangle to be cropped.""")
+                        .description("""
+                            Returns the middle part of original pixels cropped like a rectangle with full height.
+                            The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                        """)
+                        .crop(x > w_fl_2 - w_lef - fadeLength && x < w_fl_2 + w_rig + fadeLength)
+                        .fade(w_in_2 - w_lef, 0, w_in_2 - w_lef - fadeLength, 0)
+                        .fade(w_in_2 + w_rig, 0, w_in_2 + w_rig + fadeLength, 0);
+
+    overloadDissectorMethod("getVerRect")
+                        .parameter("width", """The total width of the rectangle to be cropped.""")
+                        .description("""
+                            Returns the middle part of original pixels cropped like a rectangle with full height.
+                            The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                        """) {
+        return getVerRect(width / 2, width / 2, fade, fadeLength, raw, interpolator, clone, deNull);
+    }
+
+    //</editor-fold>
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////// RECTANGLES WHICH LYE INSIDE THE IMAGE AND TOUCHES NO SIDES
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //<editor-fold defaultstate="collapsed" desc="RECTANGLES WHICH LYE INSIDE THE IMAGE AND TOUCHES NO SIDES">
+
+    createDissectorMethod("getRect")
+                            .parameter("h_abv", """height_above: The height above the middle of original image to be summed with h_btw and be used as the height of the rectangle to be cropped.""")
+                            .parameter("h_blw", """height_below: The height below the middle of original image to be summed with h_abv and be used as the height of the rectangle to be cropped.""")
+                            .parameter("w_lef", """width_left : The width left  of the middle of original image to be summed with w_rig and be used as the width of the rectangle to be cropped.""")
+                            .parameter("w_rig", """width_right: The width right of the middle of original image to be summed with w_lef and be used as the width of the rectangle to be cropped.""")
+                            .description("""
+                                Returns the middle part of original pixels cropped like a rectangle.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """)
+                            .crop(y > h_fl_2 - h_abv - fadeLength && y < h_fl_2 + h_blw + fadeLength)
+                            .crop(x > w_fl_2 - w_lef - fadeLength && x < w_fl_2 + w_rig + fadeLength)
+                            .fade(0, h_in_2 - h_abv, 0, h_in_2 - h_abv - fadeLength)
+                            .fade(0, h_in_2 + h_blw, 0, h_in_2 + h_blw + fadeLength)
+                            .fade(w_in_2 - w_lef, 0, w_in_2 - w_lef - fadeLength, 0)
+                            .fade(w_in_2 + w_rig, 0, w_in_2 + w_rig + fadeLength, 0);
+
+    overloadDissectorMethod("getCenRect")
+                            .parameter("size", """The size or side length of the square to be cropped.""")
+                            .description("""
+                                Returns the middle part of original pixels cropped like a rectangle.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """) {
+        int sq = size / 2;
+        return getRect(sq, sq, sq, sq, fade, fadeLength, raw, interpolator, clone, deNull);
+    }
+
+    //</editor-fold>
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////// RECTANGLES WHICH LYE ALONG THE CORNERS TOUCHING TWO SIDES
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //<editor-fold defaultstate="collapsed" desc="RECTANGLES WHICH LYE ALONG THE CORNERS TOUCHING TWO SIDES">
+
+    createDissectorMethod("getTopLefRect")
+                            .parameter("width", """The width from left of original image to be used as the width of the rectangle to be cropped.""")
+                            .parameter("height", """The height from top of original image to be used as the height of the rectangle to be cropped.""")
+                            .description("""
+                                Returns the top left part of original pixels cropped like a rectangle.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """)
+                            .crop(y < height + fadeLength && x < width + fadeLength)
+                            .fade(0, height, 0, height + fadeLength)
+                            .fade(width, 0, width + fadeLength, 0);
+
+    createDissectorMethod("getTopRigRect")
+                            .parameter("width", """The width from right of original image to be used as the width of the rectangle to be cropped.""")
+                            .parameter("height", """The height from top of original image to be used as the height of the rectangle to be cropped.""")
+                            .description("""
+                                Returns the top right part of original pixels cropped like a rectangle.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """)
+                            .crop(y < height + fadeLength && x > w_fl - width - fadeLength)
+                            .fade(0, height, 0, height + fadeLength)
+                            .fade(w_in - width, 0, w_in - width - fadeLength, 0);
+
+    createDissectorMethod("getBotLefRect")
+                            .parameter("width", """The width from left of original image to be used as the width of the rectangle to be cropped.""")
+                            .parameter("height", """The height from bottom of original image to be used as the height of the rectangle to be cropped.""")
+                            .description("""
+                                Returns the top left part of original pixels cropped like a rectangle.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """)
+                            .crop(y > h_fl - height - fadeLength && x < width + fadeLength)
+                            .fade(0, h_in - height, 0, h_in - height - fadeLength)
+                            .fade(width, 0, width + fadeLength, 0);
+
+    createDissectorMethod("getBotRigRect")
+                            .parameter("width", """The width from right of original image to be used as the width of the rectangle to be cropped.""")
+                            .parameter("height", """The height from bottom of original image to be used as the height of the rectangle to be cropped.""")
+                            .description("""
+                                Returns the top left part of original pixels cropped like a rectangle.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """)
+                            .crop(y > h_fl - height - fadeLength && x > w_fl - width - fadeLength)
+                            .fade(0, h_in - height, 0, h_in - height - fadeLength)
+                            .fade(w_in - width, 0, w_in - width - fadeLength, 0);
+
+    //</editor-fold>
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////// TRIANGLES WHICH ARE ALIGNED BY THE SIDES BUT TOUCH ONLY ONE SIDE
+    //////////// CROP TOOL ONLY CUTS TRIANGLES
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //<editor-fold defaultstate="collapsed" desc="TRIANGLES WHICH ARE ALIGNED BY THE SIDES BUT TOUCH ONLY ONE SIDE">
+
+    overloadDissectorMethod("getTopTri")
+                            .parameter("x_c", """The abscissa of the third point of crop triangle.""")
+                            .parameter("y_c", """The ordinate of the third point of crop triangle.""")
+                            .description("""
+                                Returns the top part of original pixels cropped by a triangle of one base same as the side.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """) {
+        raw = arrayPreCheck(raw, clone);
+        float w_fl = raw.length;
+        float h_fl = raw[0].length;
+
+        Line line1 = Line.fromTwoPoints(0, 0, x_c, y_c);
+        Line line1FadeExtent = line1.clone();
+        Line line2 = Line.fromTwoPoints(w_fl, 0, x_c, y_c);
+        Line line2FadeExtent = line2.clone();
+        line1FadeExtent.moveParallely(fadeLength, -5000, 5000);
+        line2FadeExtent.moveParallely(fadeLength, +5000, 5000);
+        ArrUtil.retainByPredicate(raw, (x, y) -> line1FadeExtent.put(x, y) < 0 && line2FadeExtent.put(x, y) > 0);
+        if (fade) {
+            line1FadeExtent.moveParallely(fadeLength * .1f, -5000, 5000);
+            line2FadeExtent.moveParallely(fadeLength * .1f, +5000, 5000);
+            ArrUtil.fade(raw, interpolator, line1, line1FadeExtent);
+            ArrUtil.fade(raw, interpolator, line2, line2FadeExtent);
+        }
+
+        if (deNull) ArrUtil.deNull(raw, Color.INVISIBLE);
+        return raw;
+    }
+
+    createDissectorMethod("getTopTri")
+                            .description("""
+                                Returns the top part of original pixels cropped by a triangle of one base same as the side and it's height equal to the half of image's height.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """)
+                            .crop(y < x + effectiveLength && x + y < w_fl + effectiveLength)
+                            .fade(w_in_2, h_in_2, w_in_2 + effectiveLength, h_in_2 + effectiveLength)
+                            .fade(w_in_2, h_in_2, w_in_2 - effectiveLength, h_in_2 + effectiveLength);
+
+    overloadDissectorMethod("getBotTri")
+                            .parameter("x_c", """The abscissa of the third point of crop triangle.""")
+                            .parameter("y_c", """The ordinate of the third point of crop triangle.""")
+                            .description("""
+                                Returns the bottom part of original pixels cropped by a triangle of one base same as the side.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """) {
+        raw = arrayPreCheck(raw, clone);
+        float w_fl = raw.length;
+        float h_fl = raw[0].length;
+
+        Line line1 = Line.fromTwoPoints(0, h_fl, x_c, y_c);
+        Line line1FadeExtent = line1.clone();
+        Line line2 = Line.fromTwoPoints(w_fl, h_fl, x_c, y_c);
+        Line line2FadeExtent = line2.clone();
+        line1FadeExtent.moveParallely(fadeLength, -5000, -5000);
+        line2FadeExtent.moveParallely(fadeLength, +5000, -5000);
+        ArrUtil.retainByPredicate(raw, (x, y) -> line1FadeExtent.put(x, y) < 0 && line2FadeExtent.put(x, y) < 0);
+        if (fade) {
+            line1FadeExtent.moveParallely(fadeLength, -5000, -5000);
+            line2FadeExtent.moveParallely(fadeLength, +5000, -5000);
+            ArrUtil.fade(raw, interpolator, line1, line1FadeExtent);
+            ArrUtil.fade(raw, interpolator, line2, line2FadeExtent);
+        }
+
+        if (deNull) ArrUtil.deNull(raw, Color.INVISIBLE);
+        return raw;
+    }
+
+    createDissectorMethod("getBotTri")
+                            .description("""
+                                Returns the bottom part of original pixels cropped by a triangle of one base same as the side and it's height equal to the half of image's height.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """)
+                            .crop(x < y + effectiveLength && x + y > w_fl - effectiveLength)
+                            .fade(w_in_2, h_in_2, w_in_2 + effectiveLength, h_in_2 - effectiveLength)
+                            .fade(w_in_2, h_in_2, w_in_2 - effectiveLength, h_in_2 - effectiveLength);
+
+    overloadDissectorMethod("getLefTri")
+                            .parameter("x_c", """The abscissa of the third point of crop triangle.""")
+                            .parameter("y_c", """The ordinate of the third point of crop triangle.""")
+                            .description("""
+                                Returns the left part of original pixels cropped by a triangle of one base same as the side.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """) {
+        raw = arrayPreCheck(raw, clone);
+        float w_fl = raw.length;
+        float h_fl = raw[0].length;
+
+        Line line1 = Line.fromTwoPoints(0, 0, x_c, y_c);
+        Line line1FadeExtent = line1.clone();
+        Line line2 = Line.fromTwoPoints(0, h_fl, x_c, y_c);
+        Line line2FadeExtent = line2.clone();
+        line1FadeExtent.moveParallely(fadeLength, 5000, -5000);
+        line2FadeExtent.moveParallely(fadeLength, 5000, +5000);
+        ArrUtil.retainByPredicate(raw, (x, y) -> line1FadeExtent.put(x, y) > 0 && line2FadeExtent.put(x, y) > 0);
+        if (fade) {
+            line1FadeExtent.moveParallely(fadeLength, 5000, -5000);
+            line2FadeExtent.moveParallely(fadeLength, 5000, +5000);
+            ArrUtil.fade(raw, interpolator, line1, line1FadeExtent);
+            ArrUtil.fade(raw, interpolator, line2, line2FadeExtent);
+        }
+
+        if (deNull) ArrUtil.deNull(raw, Color.INVISIBLE);
+        return raw;
+    }
+    
+    createDissectorMethod("getLefTri")
+                            .description("""
+                                Returns the left part of original pixels cropped by a triangle of one base same as the side and it's width equal to the half of image's width.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """)
+                            .crop(x < y + effectiveLength && x + y < w_fl + effectiveLength)
+                            .fade(w_in_2, h_in_2, w_in_2 + effectiveLength, h_in_2 + effectiveLength)
+                            .fade(w_in_2, h_in_2, w_in_2 + effectiveLength, h_in_2 - effectiveLength);
+
+    overloadDissectorMethod("getRigTri")
+                            .parameter("x_c", """The abscissa of the third point of crop triangle.""")
+                            .parameter("y_c", """The ordinate of the third point of crop triangle.""")
+                            .description("""
+                                Returns the right part of original pixels cropped by a triangle of one base same as the side.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """) {
+        raw = arrayPreCheck(raw, clone);
+        float w_fl = raw.length;
+        float h_fl = raw[0].length;
+
+        Line line1 = Line.fromTwoPoints(w_fl, 0, x_c, y_c);
+        Line line1FadeExtent = line1.clone();
+        Line line2 = Line.fromTwoPoints(w_fl, h_fl, x_c, y_c);
+        Line line2FadeExtent = line2.clone();
+        line1FadeExtent.moveParallely(fadeLength, -5000, -5000);
+        line2FadeExtent.moveParallely(fadeLength, -5000, +5000);
+        ArrUtil.retainByPredicate(raw, (x, y) -> line1FadeExtent.put(x, y) < 0 && line2FadeExtent.put(x, y) > 0);
+        if (fade) {
+            line1FadeExtent.moveParallely(fadeLength, -5000, -5000);
+            line2FadeExtent.moveParallely(fadeLength, -5000, +5000);
+            ArrUtil.fade(raw, interpolator, line1, line1FadeExtent);
+            ArrUtil.fade(raw, interpolator, line2, line2FadeExtent);
+        }
+
+        if (deNull) ArrUtil.deNull(raw, Color.INVISIBLE);
+        return raw;
+    }   
+
+    createDissectorMethod("getRigTri")
+                            .description("""
+                                Returns the right part of original pixels cropped by a triangle of one base same as the side and it's width equal to the half of image's width.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """)
+                            .crop(x > y - effectiveLength && x + y > w_fl - effectiveLength)
+                            .fade(w_in_2, h_in_2, w_in_2 - effectiveLength, h_in_2 + effectiveLength)
+                            .fade(w_in_2, h_in_2, w_in_2 - effectiveLength, h_in_2 - effectiveLength);
+
+    //</editor-fold>
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////// TRIANGLES WHICH ARE ALIGNED BY THE CORNERS AND TOUCH ONLY TWO SIDES
+    //////////// CROP TOOL ONLY CUTS TRIANGLES
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //<editor-fold defaultstate="collapsed" desc="TRIANGLES WHICH ARE ALIGNED BY THE CORNERS AND TOUCH ONLY TWO SIDES">
+
+    overloadDissectorMethod("getTopLefTri")
+                                .parameter("width", """The width of top side of crop triangle.""")
+                                .parameter("height", """The height of left side of crop triangle.""")
+                                .description("""
+                                    Returns the top left corner of original pixels cropped by a triangle.
+                                    The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                                """) {
+        raw = arrayPreCheck(raw, clone);
+
+        Line line = Line.fromTwoPoints(0, height, width, 0);
+        Line lineFadeExtent = line.clone();
+        lineFadeExtent.moveParallely(fadeLength, 5000, 5000);
+        ArrUtil.retainByPredicate(raw, (x, y) -> lineFadeExtent.put(x, y) > 0);
+        if (fade) {
+            lineFadeExtent.moveParallely(fadeLength * .1f, 5000, 5000);
+            ArrUtil.fade(raw, interpolator, line, lineFadeExtent);
+        }
+        if (deNull) ArrUtil.deNull(raw, Color.INVISIBLE);
+        return raw;
+    }
+
+    createDissectorMethod("getTopLefTri")
+                            .parameter("width", """The width of top side of crop triangle.""")
+                            .description("""
+                                Returns the top left corner of original pixels cropped by a triangle.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """)
+                            .crop(x + y < width + effectiveLength)
+                            .fade(width, 0, width + effectiveLength, effectiveLength);
+
+    overloadDissectorMethod("getTopRigTri")
+                            .parameter("width", """The width of top side of crop triangle.""")
+                            .parameter("height", """The height of right side of crop triangle.""")
+                            .description("""
+                                Returns the top right corner of original pixels cropped by a triangle.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """) {
+        raw = arrayPreCheck(raw, clone);
+        float w_fl = raw.length;
+
+        Line line = Line.fromTwoPoints(w_fl - width, 0, w_fl, height);
+        Line lineFadeExtent = line.clone();
+        lineFadeExtent.moveParallely(fadeLength, -5000, 5000);
+        ArrUtil.retainByPredicate(raw, (x, y) -> lineFadeExtent.put(x, y) < 0);
+        if (fade) {
+            lineFadeExtent.moveParallely(fadeLength * .1f, -5000, 5000);
+            ArrUtil.fade(raw, interpolator, line, lineFadeExtent);
+        }
+        if (deNull) ArrUtil.deNull(raw, Color.INVISIBLE);
+        return raw;
+    }
+
+    createDissectorMethod("getTopRigTri")
+                            .parameter("width", """The width of top side of crop triangle.""")
+                            .description("""
+                                Returns the top right corner of original pixels cropped by a triangle.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """)
+                            .crop(y < x - w_fl + width + effectiveLength)
+                            .fade(w_in - width, 0, w_in - width - effectiveLength, effectiveLength);
+
+
+    overloadDissectorMethod("getBotLefTri")
+                            .parameter("width", """The width of bottom side of crop triangle.""")
+                            .parameter("height", """The height of left side of crop triangle.""")
+                            .description("""
+                                Returns the bottom left corner of original pixels cropped by a triangle.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """) {
+        raw = arrayPreCheck(raw, clone);
+        float h_fl = raw[0].length;
+
+        Line line = Line.fromTwoPoints(0, h_fl - height, width, h_fl);
+        Line lineFadeExtent = line.clone();
+        lineFadeExtent.moveParallely(fadeLength, 5000, -5000);
+        ArrUtil.retainByPredicate(raw, (x, y) -> lineFadeExtent.put(x, y) > 0);
+        if (fade) {
+            lineFadeExtent.moveParallely(fadeLength * .1f, 5000, -5000);
+            ArrUtil.fade(raw, interpolator, line, lineFadeExtent);
+        }
+        if (deNull) ArrUtil.deNull(raw, Color.INVISIBLE);
+        return raw;
+    }
+
+    createDissectorMethod("getBotLefTri")
+                            .parameter("width", """The width of bottom side of crop triangle.""")
+                            .description("""
+                                Returns the bottom left corner of original pixels cropped by a triangle.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """)
+                            .crop(y > x + h_fl - width - effectiveLength)
+                            .fade(0, h_in - width, effectiveLength, h_in - width - effectiveLength);
+
+    overloadDissectorMethod("getBotRigTri")
+                            .parameter("width", """The width of bottom side of crop triangle.""")
+                            .parameter("height", """The height of left side of crop triangle.""")
+                            .description("""
+                                Returns the bottom left corner of original pixels cropped by a triangle.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """) {
+        raw = arrayPreCheck(raw, clone);
+        float w_fl = raw.length;
+        float h_fl = raw[0].length;
+
+        Line line = Line.fromTwoPoints(w_fl - width, h_fl, w_fl, h_fl - height);
+        Line lineFadeExtent = line.clone();
+        lineFadeExtent.moveParallely(fadeLength, -5000, -5000);
+        ArrUtil.retainByPredicate(raw, (x, y) -> lineFadeExtent.put(x, y) < 0);
+        if (fade) {
+            lineFadeExtent.moveParallely(fadeLength * .1f, -5000, -5000);
+            ArrUtil.fade(raw, interpolator, line, lineFadeExtent);
+        }
+        if (deNull) ArrUtil.deNull(raw, Color.INVISIBLE);
+        return raw;
+    }
+
+    createDissectorMethod("getBotRigTri")
+                            .parameter("width", """The width of bottom side of crop triangle.""")
+                            .description("""
+                                Returns the bottom right corner of original pixels cropped by a triangle.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """)
+                            .crop(x + y > w_fl + h_fl - width - effectiveLength)
+                            .fade(w_in - width, h_in, w_in - width - effectiveLength, h_in - effectiveLength);
+
+    //</editor-fold>
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////// THAT STRANGE POLYGON WHICH TOUCHES 2 SIDES AND HAS ONE INTERNAL ANGLE AS 135 DEGREES
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //<editor-fold defaultstate="collapsed" desc="THAT STRANGE POLYGON WHICH TOUCHES 2 SIDES AND HAS ONE INTERNAL ANGLE AS 135 DEGREES">
+
+    createDissectorMethod("getTopLefPoly")
+                            .parameter("width", """The height from top of original image to be used as the the abscissa of fourth point of the rectangle to be cropped.""")
+                            .parameter("height", """The width from left of original image to be used as the the ordinate of fourth point of the rectangle to be cropped.""")
+                            .description("""
+                                Returns the top part of original pixels cropped like by a quadrilateral.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """)
+                            .crop(y < height + fadeLength && x + y < width + height + effectiveLength)
+                            .fade(0, height, 0, height + fadeLength)
+                            .fade(width, height, width + effectiveLength, height + effectiveLength);
+
+    createDissectorMethod("getLefTopPoly")
+                            .parameter("width", """The height from top of original image to be used as the the abscissa of fourth point of the rectangle to be cropped.""")
+                            .parameter("height", """The width from left of original image to be used as the the ordinate of fourth point of the rectangle to be cropped.""")
+                            .description("""
+                                Returns the left part of original pixels cropped like by a quadrilateral.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """)
+                            .crop(x < width + fadeLength && x + y < width + height + effectiveLength)
+                            .fade(width, 0, width + fadeLength, 0)
+                            .fade(width, height, width + effectiveLength, height + effectiveLength);
+
+    createDissectorMethod("getTopRigPoly")
+                            .parameter("width", """The height from top of original image to be used as the the abscissa of fourth point of the rectangle to be cropped.""")
+                            .parameter("height", """The width from right of original image to be used as the the ordinate of fourth point of the rectangle to be cropped.""")
+                            .description("""
+                                Returns the top part of original pixels cropped like by a quadrilateral.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """)
+                            .crop(y < height + fadeLength && y < x - w_fl + width + height + effectiveLength)
+                            .fade(0, height, 0, height + fadeLength)
+                            .fade(w_in - width, height, w_in - width - effectiveLength, height + effectiveLength);
+
+    createDissectorMethod("getRigTopPoly")
+                            .parameter("width", """The height from top of original image to be used as the the abscissa of fourth point of the rectangle to be cropped.""")
+                            .parameter("height", """The width from right of original image to be used as the the ordinate of fourth point of the rectangle to be cropped.""")
+                            .description("""
+                                Returns the right part of original pixels cropped like by a quadrilateral.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """)
+                            .crop(x > w_fl - width - fadeLength && y < x - w_fl + width + height + effectiveLength)
+                            .fade(w_in - width, 0, w_in - width - fadeLength, 0)
+                            .fade(w_in - width, height, w_in - width - effectiveLength, height + effectiveLength);
+
+    createDissectorMethod("getBotLefPoly")
+                            .parameter("width", """The height from bottom of original image to be used as the the abscissa of fourth point of the rectangle to be cropped.""")
+                            .parameter("height", """The width from left of original image to be used as the the ordinate of fourth point of the rectangle to be cropped.""")
+                            .description("""
+                                Returns the bottom part of original pixels cropped like by a quadrilateral.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """)
+                            .crop(y > h_fl - height - fadeLength && y > x + h_fl - height - width - effectiveLength)
+                            .fade(0, height, 0, height - fadeLength)
+                            .fade(width, h_in - height, width + effectiveLength, h_in - height - effectiveLength);
+
+    createDissectorMethod("getLefBotPoly")
+                            .parameter("width", """The height from bottom of original image to be used as the the abscissa of fourth point of the rectangle to be cropped.""")
+                            .parameter("height", """The width from left of original image to be used as the the ordinate of fourth point of the rectangle to be cropped.""")
+                            .description("""
+                                Returns the left part of original pixels cropped like by a quadrilateral.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """)
+                            .crop(x < width + fadeLength && y > x + h_fl - height - width - effectiveLength)
+                            .fade(width, 0, width + fadeLength, 0)
+                            .fade(width, h_in - height, width + effectiveLength, h_in - height - effectiveLength);
+
+    createDissectorMethod("getBotRigPoly")
+                            .parameter("width", """The height from bottom of original image to be used as the the abscissa of fourth point of the rectangle to be cropped.""")
+                            .parameter("height", """The width from right of original image to be used as the the ordinate of fourth point of the rectangle to be cropped.""")
+                            .description("""
+                                Returns the bottom part of original pixels cropped like by a quadrilateral.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """)
+                            .crop(y > h_fl - height - fadeLength && x + y > w_fl - width + h_fl - height - effectiveLength)
+                            .fade(width, 0, width + fadeLength, 0)
+                            .fade(w_in - width, h_in - height, w_in - width - effectiveLength, h_in - height - effectiveLength);
+
+    createDissectorMethod("getRigBotPoly")
+                            .parameter("width", """The height from bottom of original image to be used as the the abscissa of fourth point of the rectangle to be cropped.""")
+                            .parameter("height", """The width from right of original image to be used as the the ordinate of fourth point of the rectangle to be cropped.""")
+                            .description("""
+                                Returns the bottom part of original pixels cropped like by a quadrilateral.
+                                The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
+                            """)
+                            .crop(x > w_fl - width - fadeLength && x + y > w_fl - width + h_fl - height - effectiveLength)
+                            .fade(w_in - width, 0, w_in - width - fadeLength, 0)
+                            .fade(w_in - width, h_in - height, w_in - width - effectiveLength, h_in - height - effectiveLength);
+    
+    //</editor-fold>
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////// UTILITY METHODS
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //<editor-fold defaultstate="collapsed" desc="UTILITY METHODS">
+
+    /**
+     * @param raw   The pixel array of concern.
+     * @param clone If it's supposed to be cloned, thus, not changing values in raw array.
+     * @return Checks if the given array is not a null value and has non null sub arrays.
+     * Returns an array to be worked on.
+     */
+    private static Color[][] arrayPreCheck(Color[][] raw, boolean clone) {
+        if (raw == null || raw[0] == null) throw new NullPointerException("The given array is null, or has null sub arrays.");
+        if (clone) raw = ArrUtil.clonePixels(raw);
+        return raw;
+    }
+
+    //</editor-fold>
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+}

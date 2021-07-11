@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.mcxiv.app.util.LineTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2021-06-30T10:21:17" hostname="ANIRUDHHP" time="0.265">
+<testsuite name="com.mcxiv.app.util.LineTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2021-07-11T05:52:03" hostname="ANIRUDHHP" time="0.006">
   <properties/>
-  <testcase name="perpendicularLineTest()" classname="com.mcxiv.app.util.LineTest" time="0.265"/>
-  <system-out><![CDATA[]]></system-out>
+  <testcase name="parallelTest()" classname="com.mcxiv.app.util.LineTest" time="0.004"/>
+  <testcase name="perpendicularLineTest()" classname="com.mcxiv.app.util.LineTest" time="0.002"/>
+  <system-out><![CDATA[y = 0.500 * x + 0.500
+y = 0.500 * x + -0.618
+x = 0.500 * y + 0.500
+x = 0.500 * y + -0.618
+]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
