@@ -1,17 +1,4 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        google()
-        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-    }
-    dependencies {
-    }
-}
-
 apply plugin: 'java-library'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
 apply from: 'JShorty.gradle'
 
 sourceCompatibility = 8.0
@@ -31,26 +18,25 @@ repositories {
             maven { url 'https://jitpack.io' }
 }
 
-dependencies {
-    compile 'com.github.Minecraftian14:StraightLines:0.5'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
-}
-
 test {
     useJUnitPlatform()
 }
 
-tasks.eclipse.doLast {
-    delete '.project'
-    delete '.classpath'
-    delete '.settings/'
+configurations {
+    provided
+    implementation.extendsFrom(provided)
+}
+
+dependencies {
+    provided 'com.github.Minecraftian14:StraightLines:0.5'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
 
     // Add in the project name.
-    def projectName = 'ProtoTilesPen'
+    def projectName = "ProtoTilesPen"
     // Add in the name of the class with the main method. Set null if no main class.
     def mainClassName = null
     // Classifying it as sources for jitpack. Other values: [sources/javadoc]
@@ -60,9 +46,9 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     // Assets folders
     def assetsDir = []
     // Additional sources folders.
-    def extraSourcesDirs = ["StraightLines"]
+    def extraSourcesDirs = []
     // Change if you want to place the jar file to another position.
-    def buildDestination = 'build/libs'
+    def buildDestination = "build/libs"
     // Add string values to copy the built jar file at different locations (relative)
     def copyDirs = []
 
@@ -92,6 +78,7 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     // from files(sourceSets.main.output.resourcesDir)
     // Or let a simple command add everything.
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    from configurations.provided.asFileTree.files.collect { zipTree(it) }
 
     manifest {
         if (mainClassName == null) {
@@ -131,9 +118,3 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 artifacts {
     archives sourcesJar
 }
-
-// I dont know what
-//wrapper {
-//    gradleVersion = "6.1.1"
-//    distributionType = Wrapper.DistributionType.ALL
-//}
