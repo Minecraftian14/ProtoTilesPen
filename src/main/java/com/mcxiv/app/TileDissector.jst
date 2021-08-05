@@ -1,5 +1,8 @@
 package com.mcxiv.app;
 
+syntax mcxiv.dissector.CreateDissectorMethod
+syntax mcxiv.dissector.CreateDissectorOverloader
+
 import com.mcxiv.app.util.AppUtil;
 import com.mcxiv.app.util.ArrUtil;
 import com.mcxiv.app.util.Color;
@@ -581,7 +584,7 @@ public class TileDissector {
                                 The dimensions remain the same, ie, the remaining pixels are Null or Transparent.
                             """)
                             .crop(y > h_fl - height - fadeLength && x + y > w_fl - width + h_fl - height - effectiveLength)
-                            .fade(width, 0, width + fadeLength, 0)
+                            .fade(0, width, 0, width - fadeLength)
                             .fade(w_in - width, h_in - height, w_in - width - effectiveLength, h_in - height - effectiveLength);
 
     createDissectorMethod("getRigBotPoly")

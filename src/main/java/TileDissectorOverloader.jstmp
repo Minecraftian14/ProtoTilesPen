@@ -1,0 +1,57 @@
+{
+  "package": "mcxiv.dissector",
+  "name": "Create Dissector Overloader",
+  "identities": [
+    {
+      "name": "Overload Dissector Method",
+      "regex": "\\n([ ]*overloadDissectorMethod\\(\"(\\w+)\"\\)([^;]+) \\{)",
+      "template": {
+        "type": "lines",
+        "content": [
+          "    /**",
+          "<<     * @param PD:NAME PD:DOCS.>>",
+          "     * @param fade If true, fades the image about the cuts by fadeLength.",
+          "     * @param fadeLength The length by which the fade takes effect.",
+          "     * @param raw If it's null, a new array is returned based on the original pixels taken in by the constructor. If it's not null, the effect os applied on this array.",
+          "     * @param interpolator The interpolator to be used to fade the pixels.",
+          "     * @param clone If true returns a completely new array and doesn't disturbs values in the given array (raw).",
+          "     * @param deNull If true changes all null values to transparent colors.",
+          "     * @return <<RD:DOCS>>",
+          "     * The dimensions remain the same, ie, the remaining pixels are Null or Transparent.",
+          "     */",
+          "    public static Color[][] <<MN:NAME>>(<<int PD:NAME, >>boolean fade, int fadeLength, Color[][] raw, FloatFunction interpolator, boolean clone, boolean deNull) {"
+        ]
+      }
+    }
+  ],
+  "elements": [
+    {
+      "name": "Method Name",
+      "docs": "",
+      "tag": "MN",
+      "references": {
+        "NAME from PARENT": 2
+      }
+    },
+    {
+      "name": "Parameter Definition",
+      "docs": "",
+      "regex": "\\.parameter\\(\"(.*)\", ([^)]+)\\)",
+      "tag": "PD",
+      "references": {
+        "NAME": 1,
+        "DOCS": 2
+      }
+    },
+    {
+      "name": "Returns Definition",
+      "docs": "",
+      "regex": "\\.description\\(\"\"\"\\n[ ]+([^)]+)\\n[ ]*\"\"\"\\)",
+      "tag": "RD",
+      "references": {
+        "DOCS": 1
+      }
+    }
+  ],
+  "example": "..."
+}

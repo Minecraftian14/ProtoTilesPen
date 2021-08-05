@@ -3,75 +3,118 @@ apply plugin: 'java'
 import groovy.io.FileType
 import groovy.json.JsonSlurper
 
+sourceSets {
+    generated {
+        java
+        compileClasspath += sourceSets.main.runtimeClasspath
+        runtimeClasspath += sourceSets.test.runtimeClasspath
+    }
+    main.java.srcDirs += generated.java.srcDirs
+}
+
+def jshortyPathx = ""
+
+task ensureJShorty {
+
+    jshortyPathx = ""
+
+    doFirst {
+
+        def root = project.projectDir.absolutePath + '\\jshorty'
+        def files = file(root).list()
+
+        for (file in files) {
+            if (file.matches("JShorty.*.jar\$")) {
+                jshortyPathx = file
+                println "JShorty executable found at $jshortyPathx"
+                return
+            }
+        }
+        println "JShorty executable not found!"
+
+        if (ext.jshortyPath.equals("")) {
+            jshortyPathx = downloadLatestJShorty(root)
+            println "JShorty executable downloaded at $jshortyPathx"
+        }
+
+    }
+}
+
 task compileJShorty(type: JavaExec) {
+    doFirst {
 
-    def proj_root = project.projectDir
-    def gen_root = project.buildDir.absolutePath + "\\generated\\JShorty\\main\\java"
+        def proj_root = project.projectDir
+        def gen_root = sourceSets.generated.java.srcDirs.getAt(0)
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    def configurations_args = []
+        def configurations_args = []
 
-    configurations_args << "jst_args_project_root=" + proj_root.absolutePath
-    configurations_args << "jst_args_sources_root=" + gen_root
+        configurations_args << "jst_args_project_root=" + proj_root.absolutePath
+        configurations_args << "jst_args_sources_root=" + gen_root
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    def file_name_args = []
-
-    project.sourceSets.main.java.srcDirs.each { root ->
-        root.eachFileRecurse(FileType.FILES) { file ->
-            file_name_args << file.absolutePath
+        project.sourceSets.main.java.srcDirs.each { root ->
+            root.eachFileRecurse(FileType.FILES) { file ->
+                if (!file.absolutePath.startsWith(gen_root.absolutePath))
+                    configurations_args << file.absolutePath
+            }
         }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        def jshortyPath = null
+
+        def jst_root = project.projectDir.absolutePath + File.separator + 'jshorty'
+
+        for (file in new File(jst_root).listFiles()) {
+            if (file.name.matches("JShorty.*.jar\$")) {
+                jshortyPath = file
+                println "JShorty executable found at $jshortyPath"
+                break
+            }
+        }
+
+        if (jshortyPath == null) {
+            println "JShorty executable not found!"
+
+            jshortyPath = new File(jst_root + File.separator + downloadLatestJShorty(jst_root))
+            println "JShorty executable downloaded at $jshortyPath"
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        classpath jshortyPath.absolutePath
+        args configurations_args
+
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    project.sourceSets.main.java.srcDir(project.buildDir.absolutePath + "\\generated\\JShorty\\main\\java")
-
-    def jshorty_exec = ""
-
-
-    proj_root.eachFileRecurse(FileType.FILES) { file ->
-        if (file.name.matches("JShorty.*.jar\$")) {
-            jshorty_exec = file.absolutePath
-            return false
-        }
-    }
-
-    if (jshorty_exec.equals(""))
-        downloadLatestJShorty(proj_root.absolutePath)
-
-    classpath jshorty_exec
-    args configurations_args + file_name_args
 }
 
 compileJava.dependsOn compileJShorty
 
-task something {
-    downloadLatestJShorty(project.projectDir.absolutePath)
-}
-
-static void downloadLatestJShorty(String path) {
+static String downloadLatestJShorty(String path) {
     def releaseData = downloadToString("https://api.github.com/repos/Minecraftian14/JShortyOutlet/releases/latest");
     def parsedJson = new JsonSlurper().parseText(releaseData)
 
     for (data in parsedJson.assets) {
 
         def assetName = data.name
-        println assetName
         if (assetName.startsWith("JShorty") && assetName.endsWith(".jar")) {
 
             println "Downloading release: $parsedJson.tag_name"
-            downloadFile(data.browser_download_url.toString(), path + File.separator + "jshorty", assetName.toString())
-            break;
+            downloadFile(data.browser_download_url, path + File.separator + assetName)
+
+            return assetName
         }
     }
+
+    return null
 }
 
-static void downloadFile(String fileURL, String saveDir, String fileName) throws IOException {
-    new File(saveDir).mkdirs();
-    FileOutputStream outputStream = new FileOutputStream(saveDir + File.separator + fileName);
+static void downloadFile(String fileURL, String saveDir) throws IOException {
+    FileOutputStream outputStream = new FileOutputStream(saveDir);
     downloadTo(fileURL, outputStream);
 }
 
@@ -112,20 +155,3 @@ static void downloadTo(String urlPath, OutputStream outputStream) throws IOExcep
     inputStream.close();
     connection.disconnect();
 }
-
-
-task parseJson {
-    doLast {
-        def jsonFile = file('path/to/json')
-        def parsedJson = new JsonSlurper().parseText(jsonFile.text)
-
-        println parsedJson.properties.bar.type
-    }
-}
-
-
-
-
-
-
-

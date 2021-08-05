@@ -1,0 +1,148 @@
+{
+  "package": "mcxiv.dissector",
+  "name": "Create Dissector Method",
+  "identities": [
+    {
+      "name": "Create Dissector Method",
+      "regex": "\\n([ ]*createDissectorMethod\\(\"(\\w+)\"\\)([^;]+);)",
+      "template": {
+        "type": "lines",
+        "content": [
+          "    /**",
+          "<<     * @param PD:NAME PD:DOCS.>>",
+          "     * @param fade If true, fades the image about the cuts by fadeLength.",
+          "     * @param fadeLength The length by which the fade takes effect.",
+          "     * @param raw If it's null, a new array is returned based on the original pixels taken in by the constructor. If it's not null, the effect os applied on this array.",
+          "     * @param interpolator The interpolator to be used to fade the pixels.",
+          "     * @param clone If true returns a completely new array and doesn't disturbs values in the given array (raw).",
+          "     * @param deNull If true changes all null values to transparent colors.",
+          "     * @return <<RD:DOCS>>",
+          "     * The dimensions remain the same, ie, the remaining pixels are Null or Transparent.",
+          "     */",
+          "    public static Color[][] <<MN:NAME>>(<<int PD:NAME, >>boolean fade, int fadeLength, Color[][] raw, FloatFunction interpolator, boolean clone, boolean deNull) {",
+          "        raw = arrayPreCheck(raw, clone);",
+          "        <<VAR_WIN>>",
+          "        <<VAR_HIN>>",
+          "        <<VAR_WFL>>",
+          "        <<VAR_HFL>>",
+          "        <<VAR_WIN_2>>",
+          "        <<VAR_HIN_2>>",
+          "        <<VAR_WFL_2>>",
+          "        <<VAR_HFL_2>>",
+          "        <<VAR_EL>>",
+          "<<        ArrUtil.retainByPredicate(raw, (x, y) -> CROP:EXPR);>>",
+          "        if (fade) {",
+          "<<            ArrUtil.fade(raw, interpolator, FADE:PARAMS);>>",
+          "        }",
+          "        if (deNull) ArrUtil.deNull(raw, Color.INVISIBLE);",
+          "        return raw;",
+          "    }"
+        ]
+      }
+    }
+  ],
+  "elements": [
+    {
+      "name": "Method Name",
+      "docs": "",
+      "tag": "MN",
+      "references": {
+        "NAME from PARENT": 2
+      }
+    },
+    {
+      "name": "Parameter Definition",
+      "docs": "",
+      "regex": "\\.parameter\\(\"(.*)\", ([^)]+)\\)",
+      "tag": "PD",
+      "references": {
+        "NAME": 1,
+        "DOCS": 2
+      }
+    },
+    {
+      "name": "Returns Definition",
+      "docs": "",
+      "regex": "\\.description\\(\"\"\"\\n[ ]+([^)]+)\\n[ ]*\"\"\"\\)",
+      "tag": "RD",
+      "references": {
+        "DOCS": 1
+      }
+    },
+    {
+      "name": "Crop Method Call",
+      "docs": "",
+      "regex": "\\.crop\\(([^)]+)\\)",
+      "tag": "CROP",
+      "references": {
+        "EXPR": 1
+      }
+    },
+    {
+      "name": "Fade Method Call",
+      "docs": "",
+      "regex": "\\.fade\\(([^)]+)\\)",
+      "tag": "FADE",
+      "references": {
+        "PARAMS": 1
+      }
+    }
+  ],
+  "expressions": [
+    {
+      "name": "Width stored as an integer",
+      "regex": "w_in[^_]",
+      "tag": "VAR_WIN",
+      "expression": "int w_in = raw.length;"
+    },
+    {
+      "name": "Height stored as an integer",
+      "regex": "h_in[^_]",
+      "tag": "VAR_HIN",
+      "expression": "int h_in = raw[0].length;"
+    },
+    {
+      "name": "Width stored as a float",
+      "regex": "w_fl[^_]",
+      "tag": "VAR_WFL",
+      "expression": "float w_fl = raw.length;"
+    },
+    {
+      "name": "Height stored as a float",
+      "regex": "h_fl[^_]",
+      "tag": "VAR_HFL",
+      "expression": "float h_fl = raw[0].length;"
+    },
+    {
+      "name": "Half of Width stored as an integer",
+      "regex": "w_in_2",
+      "tag": "VAR_WIN_2",
+      "expression": "int w_in_2 = raw.length / 2;"
+    },
+    {
+      "name": "Half of Height stored as an integer",
+      "regex": "h_in_2",
+      "tag": "VAR_HIN_2",
+      "expression": "int h_in_2 = raw[0].length / 2;"
+    },
+    {
+      "name": "Half of Width stored as a float",
+      "regex": "w_fl_2",
+      "tag": "VAR_WFL_2",
+      "expression": "float w_fl_2 = raw.length / 2f;"
+    },
+    {
+      "name": "Half of Height stored as a float",
+      "regex": "h_fl_2",
+      "tag": "VAR_HFL_2",
+      "expression": "float h_fl_2 = raw[0].length / 2f;"
+    },
+    {
+      "name": "Effective Length",
+      "regex": "effectiveLength",
+      "tag": "VAR_EL",
+      "expression": "int effectiveLength = (int) (fadeLength * AppUtil.ROOT_2);"
+    }
+  ],
+  "example": "..."
+}

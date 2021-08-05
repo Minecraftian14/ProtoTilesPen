@@ -68,7 +68,6 @@ public class CachedTiles {
     public CachedTiles(Color[][] original, boolean fade, int fadeLength, FloatFunction interpolator, Blending blender) {
 
         Color[][] topPixels = ProtoTiles.getTopFlat(original);
-//        Color[][] topPixels = ArrUtil.clonePixels(original);
 
         topFlat = topPixels;
         rigFlat = ArrUtil.rot90(topPixels);

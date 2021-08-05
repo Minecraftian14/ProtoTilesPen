@@ -15,7 +15,7 @@ version '0.1'
 repositories {
     mavenLocal()
     mavenCentral()
-            maven { url 'https://jitpack.io' }
+    maven { url 'https://jitpack.io' }
 }
 
 test {
@@ -62,9 +62,6 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     // Note that "/build/classes/java/main" is appended automatically to extraSourcesDirs
 
 
-    //
-
-
     archiveClassifier.set(classifier)
 
     for (i in 0..<extraSourcesDirs.size())
@@ -74,8 +71,10 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     from files(extraSourcesDirs)
 
     // Add the files manually
-    // from files(sourceSets.main.output.classesDirs)
-    // from files(sourceSets.main.output.resourcesDir)
+    from files(sourceSets.main.output.classesDirs)
+    from files(sourceSets.main.output.resourcesDir)
+//    from files(sourceSets.generated.output.classesDirs)
+//    from files(sourceSets.generated.output.resourcesDir)
     // Or let a simple command add everything.
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     from configurations.provided.asFileTree.files.collect { zipTree(it) }
@@ -105,8 +104,6 @@ task sourcesJar(type: Jar, dependsOn: classes) {
             }
         }
     }
-
-    with jar
 
     //</editor-fold>
 
